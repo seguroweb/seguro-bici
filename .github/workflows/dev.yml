@@ -1,4 +1,4 @@
-name: Seguro Bici Production Flow
+name: Seguro Bici Flow
 on:
   push:
     branches:
