@@ -14,10 +14,10 @@ jobs:
           mkdir -p ~/.ssh
           echo -n "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 162.243.188.66 >> ~/.ssh/known_hosts
+          ssh-keyscan -H 143.198.55.52 >> ~/.ssh/known_hosts
       - name: Deploy via SSH
         run: |
-            ssh -o StrictHostKeyChecking=no gys_user@162.243.188.66 << 'EOF'
+            ssh -o StrictHostKeyChecking=no gys_user@143.198.55.52 << 'EOF'
             export NVM_DIR="$HOME/.nvm"
             source "$NVM_DIR/nvm.sh"
             cd ~/var/www/seguro-bici-dev || {
