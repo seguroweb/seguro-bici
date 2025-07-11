@@ -1,39 +1,40 @@
 name: Seguro Bici Flow funcionando
+
 on:
   push:
     branches:
-      - main
+      
+main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Set up SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo -n "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 143.198.55.52 >> ~/.ssh/known_hosts
-      - name: Deploy via SSH
-        run: |
-            ssh -o StrictHostKeyChecking=no gys_user@143.198.55.52 << 'EOF'
-            export NVM_DIR="$HOME/.nvm"
-            source "$NVM_DIR/nvm.sh"
-            cd ~/var/www/seguro-bici-dev || {
-                git clone https://github.com/seguroweb/seguro-bici.git ~/var/www/seguro-bici-dev
-                cd ~/var/www/seguro-bici-dev
-            }
-            git pull origin main
-            npm install
-            npm run build
-            pm2 restart seguro-bici-dev || pm2 start npm --name "seguro-bici-dev" -- start
-            EOF
+      
+name: Checkout repo
+      uses: actions/checkout@v4
 
-          
+      
+name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan 143.198.55.52 >> ~/.ssh/known_hosts
 
-
-
-
-
-
+      
+name: Deploy via SSH
+      run: |
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no gys_user@143.198.55.52 << 'EOF'
+          export NVM_DIR="$HOME/.nvm"
+          source "$NVM_DIR/nvm.sh"
+          cd ~/var/www/seguro-bici-dev  {
+            git clone https://github.com/seguroweb/seguro-bici.git ~/var/www/seguro-bici-dev
+            cd ~/var/www/seguro-bici-dev
+          }
+          git pull origin main
+          npm install
+          npm run build
+          pm2 restart seguro-bici-dev  pm2 start npm --name "seguro-bici-dev" -- start
+        EOF
