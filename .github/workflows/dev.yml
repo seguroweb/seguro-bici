@@ -1,4 +1,4 @@
-name: Seguro Bici Flow
+name: Seguro Bici Flow funcionando
 on:
   push:
     branches:
