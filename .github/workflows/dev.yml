@@ -12,27 +12,25 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo -n "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 143.198.105.146 >> ~/.ssh/known_hosts
-      - name: Deploy Nest.js backend
+          ssh-keyscan -H 162.243.188.66 >> ~/.ssh/known_hosts
+      - name: Deploy via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no gys_user@143.198.105.146 << 'EOF'
-            set -e
+            ssh -o StrictHostKeyChecking=no gys_user@162.243.188.66 << 'EOF'
             export NVM_DIR="$HOME/.nvm"
             source "$NVM_DIR/nvm.sh"
-            cd ~/var/www/novedades-prod-backend || {
-              mkdir -p ~/var/www
-              ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-              git clone git@github.com:seguroweb/novedades-backend.git ~/var/www/novedades-prod-backend
-              cd ~/var/www/novedades-prod-backend
+            cd ~/var/www/seguro-bici-dev || {
+                git clone https://github.com/seguroweb/seguro-bici.git ~/var/www/seguro-bici-dev
+                cd ~/var/www/seguro-bici-dev
             }
             git pull origin main
             npm install
             npm run build
-            pm2 restart novedades-backend || pm2 start dist/main.js --name "novedades-backend"
-            pm2 save
-          EOF
+            pm2 restart seguro-bici-dev || pm2 start npm --name "seguro-bici-dev" -- start
+            EOF
+
+          
 
 
 
