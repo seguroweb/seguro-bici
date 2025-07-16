@@ -31,9 +31,7 @@ jobs:
             mkdir -p ~/var/www/seguro-bici-monorepo/server
             cd ~/var/www/seguro-bici-monorepo
             # Clonar si no existe el repo
-            if [ ! -d ".git" ]; then
-              git clone https://github.com/seguroweb/seguro-bici.git .
-            fi
+            git clone https://github.com/seguroweb/seguro-bici.git .
             git pull origin main
             #######################
             # BACKEND: Nest.js
