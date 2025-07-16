@@ -47,4 +47,4 @@ jobs:
             npm install
             npm run build
             pm2 restart seguro-bici-frontend || pm2 start npm --name "seguro-bici-frontend" -- start
-          EOF
+          EOF 
