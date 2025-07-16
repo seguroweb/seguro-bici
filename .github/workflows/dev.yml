@@ -1,45 +1,52 @@
-name: Seguro Bici Flow funcionando
-
+name: Seguro Bici Monorepo Deploy
 on:
   push:
     branches:
       - main
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
       - name: Use Node.js 20.11.1
         uses: actions/setup-node@v4
         with:
           node-version: 20.11.1
-
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan 143.198.55.52 >> ~/.ssh/known_hosts
-
-      - name: Deploy via SSH
+      - name: Deploy frontend and backend
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no gys_user@143.198.55.52 << 'EOF'
             export NVM_DIR="$HOME/.nvm"
             source "$NVM_DIR/nvm.sh"
             nvm install 20.11.1
             nvm use 20.11.1
-
-            cd ~/var/www/seguro-bici-dev || {
-              git clone https://github.com/seguroweb/seguro-bici.git ~/var/www/seguro-bici-dev
-              cd ~/var/www/seguro-bici-dev
-            }
-
+            # Crear carpetas si no existen
+            mkdir -p ~/var/www/seguro-bici-monorepo/client
+            mkdir -p ~/var/www/seguro-bici-monorepo/server
+            cd ~/var/www/seguro-bici-monorepo
+            # Clonar si no existe el repo
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/seguroweb/seguro-bici.git .
+            fi
             git pull origin main
+            #######################
+            # BACKEND: Nest.js
+            #######################
+            cd server
             npm install
             npm run build
-            pm2 restart seguro-bici-dev || pm2 start npm --name "seguro-bici-dev" -- start
+            pm2 restart seguro-bici-backend || pm2 start dist/main.js --name "seguro-bici-backend"
+            #######################
+            # FRONTEND: Next.js
+            #######################
+            cd ../client
+            npm install
+            npm run build
+            pm2 restart seguro-bici-frontend || pm2 start npm --name "seguro-bici-frontend" -- start
           EOF
